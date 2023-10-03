@@ -96,6 +96,7 @@ RUN zypper refresh && \
 # * rawtherapee: Raw Therapee. RAW Photo Editor
 # * gnu_parallel: GNU Parallel. Used to handle multiprocessing runs. Mostly for our build tools.
 # * gmic: GREYC's Magic for Image Computing. Used for some photo editing manipulation.
+# * less: For help in catting files. Mostly for debug.
 
 RUN  zypper refresh && \
     zypper install -y \
@@ -107,7 +108,8 @@ RUN  zypper refresh && \
         python310-pip \
         rawtherapee \
         gnu_parallel \
-        gmic && \
+        gmic \
+        less && \
     rm -rf /var/cache/zypp/*
 
 ##########################
@@ -120,6 +122,14 @@ RUN gmic up
 ##########################
 RUN mkdir -p /opt/rawtherapee/PP3s
 COPY --from=downloader /output/PP3s /opt/rawtherapee/PP3s
+
+################################
+#  === CALCULATE PP3 INFO ===  #
+################################
+COPY ./build_scripts/pp3_info.sh /tmp
+RUN chmod 755 /tmp/pp3_info.sh && \
+    /tmp/pp3_info.sh "/opt/rawtherapee/pp3_info.json" "/opt/rawtherapee/PP3s" && \
+    rm /tmp/pp3_info.sh
 
 ################################################################################
 ################################################################################
@@ -145,4 +155,3 @@ FROM baseline AS prod
 # Things to do here!
 
 LABEL org.opencontainers.image.authors="wonderfish@gmail.com"
-
