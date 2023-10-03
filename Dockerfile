@@ -78,11 +78,11 @@ FROM opensuse/tumbleweed:latest AS baseline
 #################
 #  BASE UPDATE  #
 #################
-COPY ./build_scripts/zypper_update.sh /tmp
-RUN chmod 755 /tmp/zypper_update.sh && /tmp/zypper_update.sh
 
-# We won't need the base update script after the first run.
-RUN rm /tmp/zypper_update.sh
+RUN zypper refresh && \
+    zypper dup -y && \
+    zypper update -y && \
+    rm -rf /var/cache/zypp/*
 
 ########################################
 #  INSTALL BASE PACKAGES WE WILL NEED  #
@@ -97,21 +97,18 @@ RUN rm /tmp/zypper_update.sh
 # * gnu_parallel: GNU Parallel. Used to handle multiprocessing runs. Mostly for our build tools.
 # * gmic: GREYC's Magic for Image Computing. Used for some photo editing manipulation.
 
-COPY ./build_scripts/zypper_wrap.sh /tmp
-RUN chmod 755 /tmp/zypper_wrap.sh
-
-RUN /tmp/zypper_wrap.sh install -y \
-    aws-cli \
-    exiftool \
-    ImageMagick \
-    jq \
-    python310 \
-    python310-pip \
-    rawtherapee \
-    gnu_parallel \
-    gmic
-
-RUN rm /tmp/zypper_wrap.sh
+RUN  zypper refresh && \
+    zypper install -y \
+        aws-cli \
+        exiftool \
+        ImageMagick \
+        jq \
+        python310 \
+        python310-pip \
+        rawtherapee \
+        gnu_parallel \
+        gmic && \
+    rm -rf /var/cache/zypp/*
 
 ##########################
 #  HANDLE GMIC UPDATING  #
