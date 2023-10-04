@@ -42,27 +42,27 @@ RUN git clone --depth=1 "https://github.com/pixlsus/RawTherapee-Presets" /output
 RUN mkdir -p /output/PP3s/StefanChirila
 RUN curl -o /tmp/customchrome1.zip --location "http://www.stefanchirila.com/customchrome_files/set1/customCHROME_1_JPG_essentials-FEB9-2014.zip" && \
     unzip -d /output/PP3s/StefanChirila /tmp/customchrome1.zip && \
-    rm  /tmp/customchrome1.zip
+    rm  /tmp/customchrome1.zip || echo "customCHROME_1_JPG_essentials failed to download/unzip"
 
 RUN curl -o /tmp/customchrome2.zip --location "http://www.stefanchirila.com/customchrome_files/set2/customCHROME2.zip" && \
     unzip -d /output/PP3s/StefanChirila /tmp/customchrome2.zip && \
-    rm /tmp/customchrome2.zip
+    rm /tmp/customchrome2.zip || echo "customCHROME2 failed to download/unzip"
 
 RUN curl -o /tmp/Tribute400H.zip --location "http://www.stefanchirila.com/customchrome_files/tribute/tribute400h/Tribute400H.zip" && \
     unzip -d /output/PP3s/StefanChirila /tmp/Tribute400H.zip && \
-    rm /tmp/Tribute400H.zip
+    rm /tmp/Tribute400H.zip || echo "Tribute400H failed to download/unzip"
 
 RUN curl -o /tmp/stefanchrome-1.zip --location "http://www.stefanchirila.com/customchrome_files/stefanCHROME/1/stefanCHROME-I.zip" && \
     unzip -d /output/PP3s/StefanChirila /tmp/stefanchrome-1.zip && \
-    rm /tmp/stefanchrome-1.zip
+    rm /tmp/stefanchrome-1.zip || echo "stefanCHROME-I failed to download/unzip"
 
 RUN curl -o /tmp/carpathica.zip --location "http://www.stefanchirila.com/customchrome_files/Carpathica/Carpathica_Presets-Sept22-2017.zip" && \
     unzip -d /output/PP3s/StefanChirila /tmp/carpathica.zip && \
-    rm /tmp/carpathica.zip
+    rm /tmp/carpathica.zip || echo "Carpathica failed to download/unzip"
 
 RUN curl -o /tmp/customchrome-holidaypack.zip --location "http://stefanchirila.com/customchrome_files/HolidayPack/customChrome-HolidayPack.zip" && \
     unzip -d /output/PP3s/StefanChirila /tmp/customchrome-holidaypack.zip && \
-    rm /tmp/customchrome-holidaypack.zip
+    rm /tmp/customchrome-holidaypack.zip || echo "customChrome-HolidayPack failed to download/unzip"
 
 ################################################################################
 ################################################################################
