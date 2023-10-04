@@ -128,7 +128,6 @@ COPY --from=downloader /output/PP3s /opt/rawtherapee/PP3s
 #####################
 COPY ./PP3s /opt/rawtherapee/PP3s
 
-
 ################################
 #  === CALCULATE PP3 INFO ===  #
 ################################
@@ -139,6 +138,15 @@ RUN chmod 755 /tmp/pp3_info.sh && \
         "/opt/rawtherapee/PP3s" \
         "/usr/share/rawtherapee/profiles" && \
     rm /tmp/pp3_info.sh
+
+##################################
+#  === CALCULATE CLUT NAMES ===  #
+##################################
+RUN mkdir -p "/opt/gmic"
+COPY ./build_scripts/clut_names.sh /tmp
+RUN chmod 755 /tmp/clut_names.sh && \
+    /tmp/clut_names.sh "/opt/gmic/clut_names.txt" && \
+    rm /tmp/clut_names.sh
 
 ################################################################################
 ################################################################################

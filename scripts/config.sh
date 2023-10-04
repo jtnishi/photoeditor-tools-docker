@@ -20,3 +20,4 @@
 ########################################################################################################################
 
 PP3_INFO_FILE_LOCATION="/opt/rawtherapee/pp3_info.json"
+GMIC_CLUT_NAMES_FILE_LOCATION="/opt/gmic/clut_names.txt"
