@@ -169,6 +169,7 @@ RUN echo "TO DO!"
 
 FROM baseline AS prod
 
+LABEL version="0.1.0"
 LABEL org.opencontainers.image.authors="wonderfish@gmail.com"
 
 # Things to do here!
