@@ -148,6 +148,15 @@ RUN chmod 755 /tmp/clut_names.sh && \
     /tmp/clut_names.sh "/opt/gmic/clut_names.txt" && \
     rm /tmp/clut_names.sh
 
+####################################
+#  === CALCULATE SAMPLE NAMES ===  #
+####################################
+RUN mkdir -p "/opt/gmic"
+COPY ./build_scripts/sample_names.sh /tmp
+RUN chmod 755 /tmp/sample_names.sh && \
+    /tmp/sample_names.sh "/opt/gmic/sample_names.txt" && \
+    rm /tmp/sample_names.sh
+
 ################################################################################
 ################################################################################
 

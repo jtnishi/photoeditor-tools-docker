@@ -1,6 +1,6 @@
 #!/bin/bash
 ########################################################################################################################
-#  clut_names.sh                                                                                                       #
+#  sample_names.sh                                                                                                     #
 #                                                                                                                      #
 #  Copyright (c) 2023 Jason Nishi                                                                                      #
 #                                                                                                                      #
@@ -53,12 +53,12 @@ logstr() {
     echo "${OUT_STR}" 1>&2
 }
 
-# Get the list of CLUTs from G'MIC
-clut_list_text() {
+# Get the list of samples from G'MIC
+sample_list_text() {
 
     # State machining:
-    #  1 = Looking for the start of the list of CLUTs.
-    #  2 = In the list, looking for the end of the list of CLUTs.
+    #  1 = Looking for the start of the list of samples.
+    #  2 = In the list, looking for the end of the list of samples.
     #  3 = After the list. 
     STATE=1
     CAPTURED=""
@@ -66,11 +66,11 @@ clut_list_text() {
     # Capture the help text to a text file first, for easy processing, due
     # to weirdness in the help stuff.
     CAPTURE_HELP_FILE="${WORKDIR}/capture_help.txt"
-    gmic help clut | sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g' >"${CAPTURE_HELP_FILE}"
+    gmic help sample | sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g' >"${CAPTURE_HELP_FILE}"
 
     cat "${CAPTURE_HELP_FILE}" | while read LINE; do
         if [[ ${STATE} -eq 1 ]]; then
-            MATCHED="$(echo "${LINE}" | grep -E ".*clut_name.*can.*be.*\{")"
+            MATCHED="$(echo "${LINE}" | grep -E ".*_name1=\{")"
             COUNT="$(echo -n "${MATCHED}" | wc -c)"
             if [[ ${COUNT} -gt 0 ]]; then
                 STATE=2
@@ -78,7 +78,7 @@ clut_list_text() {
                 CAPTURED="${CUR_CAPTURE}"
             fi
         elif [[ ${STATE} -eq 2 ]]; then
-            CUR_CAPTURE="$(echo "${LINE}" | grep -E -o '[^\}]*\}?' | head -n 1 | sed -E 's/\}$//')"
+            CUR_CAPTURE="$(echo "${LINE}" | grep -E -o '[^\}]*\}?' | head -n 1 | sed -E 's/\}.*//')"
             CAPTURED="${CAPTURED} ${CUR_CAPTURE}"
 
             CHECKER="$(echo "${LINE}" | grep -F -o '}')"
@@ -93,9 +93,12 @@ clut_list_text() {
 }
 
 # Take the lines from the help file and turn them into individual item lines
-cleanup_clut_list() {
+cleanup_sample_list() {
     echo "${1}" | sed -E 's/\|/\n/g' | while read ITEM; do
-        echo "${ITEM}" | sed -E -e 's/^\s*//' -e 's/\s$//'
+        CUR_ITEM=$(echo "${ITEM}" | sed -E -e 's/^\s*//' -e 's/\s$//')
+        if [[ "${CUR_ITEM}" != "?" ]]; then
+            echo "${CUR_ITEM}"
+        fi
     done
 }
 
@@ -108,9 +111,9 @@ cleanup_clut_list() {
 
 OUTPUT_TEXT="${1}"
 
-logstr "Getting list of CLUTs from G'MIC"
-FULL_LIST="$(clut_list_text)"
-logstr "Cleaning up list of CLUTs and storing in ${OUTPUT_TEXT}"
-cleanup_clut_list "${FULL_LIST}" | sort -u > "${OUTPUT_TEXT}"
+logstr "Getting list of samples from G'MIC"
+FULL_LIST="$(sample_list_text)"
+logstr "Cleaning up list of samples and storing in ${OUTPUT_TEXT}"
+cleanup_sample_list "${FULL_LIST}" | sort -u > "${OUTPUT_TEXT}"
 COUNT="$(cat "${OUTPUT_TEXT}" | wc -l)"
-logstr "CLUT list output to ${OUTPUT_TEXT}. Count of CLUTs: ${COUNT}"
+logstr "Sample list output to ${OUTPUT_TEXT}. Count of samples: ${COUNT}"
