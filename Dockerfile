@@ -152,6 +152,10 @@ RUN echo "TO DO!"
 
 FROM baseline AS prod
 
+LABEL org.opencontainers.image.authors="wonderfish@gmail.com"
+
 # Things to do here!
 
-LABEL org.opencontainers.image.authors="wonderfish@gmail.com"
+RUN mkdir -p /opt/bin
+COPY ./scripts/*.sh /opt/bin
+RUN chmod 755 /opt/bin/*.sh
