@@ -67,7 +67,10 @@ calc_checksum() {
 calc_slug() {
     SLUGIFY_STR="${1}"
     echo -n "${SLUGIFY_STR}" | \
-        sed --regexp-extended 's/[^A-Za-z0-9\-\_]/_/g'
+        sed \
+            --regexp-extended \
+            --expression='s/[^A-Za-z0-9\_\+\-]+/_/g' \
+            --expression='s/\_+$//'
 }
 
 #  Calculate the relative path for a file.
@@ -88,7 +91,7 @@ calc_info() {
     FILENAME="$(basename "${FILE_PATH}")"
     RELPATH="$(calc_relpath "${FILE_PATH}" "${BASE_PATH}")"
     CHECKSUM="$(calc_checksum "${FILE_PATH}")"
-    SLUG="$(calc_slug "${RELPATH}")"
+    SLUG="$(calc_slug "${RELPATH%%.pp3}")"
 
     # https://spin.atomicobject.com/2021/06/08/jq-creating-updating-json/
     jq \
@@ -99,7 +102,8 @@ calc_info() {
         --arg checksum "${CHECKSUM}" \
         --arg slug "${SLUG}" \
         --arg filename "${FILENAME}" \
-        '{"file_path": $filepath, "relpath": $relpath, "checksum": $checksum, "key": $slug, "file_name": $filename}'
+        --arg basefolder "${BASE_PATH}" \
+        '{"file_path": $filepath, "relpath": $relpath, "checksum": $checksum, "key": $slug, "file_name": $filename, "base_path": $basefolder}'
 }
 
 #  Calculate the information for all key files in the main path.
@@ -132,20 +136,22 @@ generate_final_json() {
 #  === MAIN ===  #
 ##################
 
-main_func() {
-    OUTPUT_JSON="${1}"
-    PP3_SEARCH_DIR="${2}"
+OUTPUT_JSON="${1}"
+shift 1
+PP3_SEARCH_DIRS=("${@}")
 
-    logstr "Starting search for PP3 files in folder ${PP3_SEARCH_DIR}"
-    TEMP_OUTPUT="${WORKDIR}/capture.jsonlines.txt"
-    calc_all_infos "${TEMP_OUTPUT}" "${PP3_SEARCH_DIR}" "*.pp3"
-    LINE_COUNT="$(cat "${TEMP_OUTPUT}" | wc -l)"
-    logstr "Total found PP3s: ${LINE_COUNT}"
+TEMP_OUTPUT="${WORKDIR}/capture.jsonlines.txt"
 
-    logstr "Generating output JSON of data at ${OUTPUT_JSON}"
-    generate_final_json "${TEMP_OUTPUT}" "${OUTPUT_JSON}"
+for CURDIR in "${PP3_SEARCH_DIRS[@]}"
+do
+    logstr "Starting search for PP3 files in folder ${CURDIR}"
+    calc_all_infos "${TEMP_OUTPUT}" "${CURDIR}" "*.pp3"
+done
 
-    logstr "Completed output JSON for PP3 files."
-}
+LINE_COUNT="$(cat "${TEMP_OUTPUT}" | wc -l)"
+logstr "Total found PP3s: ${LINE_COUNT}"
 
-main_func "${1}" "${2}"
+logstr "Generating output JSON of data at ${OUTPUT_JSON}"
+generate_final_json "${TEMP_OUTPUT}" "${OUTPUT_JSON}"
+
+logstr "Completed output JSON for PP3 files."

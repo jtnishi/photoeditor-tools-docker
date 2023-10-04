@@ -1,0 +1,21 @@
+[Version]
+AppVersion=5.8
+Version=346
+
+[Exposure]
+Auto=true
+HistogramMatching=false
+CurveFromHistogramMatching=false
+ClampOOG=true
+
+[HLRecovery]
+Enabled=true
+Method=Blend
+
+[Color Management]
+InputProfile=(cameraICC)
+ToneCurve=false
+WorkingProfile=sRGB
+OutputProfile=RTv4_sRGB
+OutputProfileIntent=Relative
+OutputBPC=true

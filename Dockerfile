@@ -123,12 +123,21 @@ RUN gmic up
 RUN mkdir -p /opt/rawtherapee/PP3s
 COPY --from=downloader /output/PP3s /opt/rawtherapee/PP3s
 
+#####################
+#  ADD CUSTOM PP3s  #
+#####################
+COPY ./PP3s /opt/rawtherapee/PP3s
+
+
 ################################
 #  === CALCULATE PP3 INFO ===  #
 ################################
 COPY ./build_scripts/pp3_info.sh /tmp
 RUN chmod 755 /tmp/pp3_info.sh && \
-    /tmp/pp3_info.sh "/opt/rawtherapee/pp3_info.json" "/opt/rawtherapee/PP3s" && \
+    /tmp/pp3_info.sh \
+        "/opt/rawtherapee/pp3_info.json" \
+        "/opt/rawtherapee/PP3s" \
+        "/usr/share/rawtherapee/profiles" && \
     rm /tmp/pp3_info.sh
 
 ################################################################################
