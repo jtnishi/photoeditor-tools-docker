@@ -1,6 +1,6 @@
 #!/bin/bash
 ########################################################################################################################
-#  list_pp3_keys.sh                                                                                                    #
+#  strip_rotation.sh                                                                                                   #
 #                                                                                                                      #
 #  Copyright (c) 2023 Jason Nishi                                                                                      #
 #                                                                                                                      #
@@ -23,7 +23,7 @@
 #  === SETUP ===  #
 ###################
 
-#  N/A
+
 
 ############################
 #  === MAIN VARIABLES ===  #
@@ -46,6 +46,36 @@ source "${SCRIPT_DIR}/common_funcs.sh"
 #  === MAIN ===  #
 ##################
 
-if [[ -f "${PP3_INFO_FILE_LOCATION}" ]]; then
-    jq -r '.[].key' "${PP3_INFO_FILE_LOCATION}" | sort -u
+############
+#  INPUTS  #
+############
+
+SOURCE_IMAGE="${1}"
+TARGET_IMAGE="${2}"
+
+###############################################################################
+
+####################
+#  MAIN EXECUTION  #
+####################
+
+OUTPUT_FOLDER="$(dirname "${TARGET_IMAGE}")"
+
+# Vallidations of parameters 
+
+if [[ ! -f "${SOURCE_IMAGE}" ]]; then
+    logstr "${SOURCE_IMAGE} not found!"
+    exit 1
 fi
+
+if [[ ! -d "${OUTPUT_FOLDER}" ]]; then
+    logstr "Making folder ${OUTPUT_FOLDER}"
+    mkdir -p "${OUTPUT_FOLDER}"
+fi
+
+logstr "Stripping rotation data from ${SOURCE_IMAGE}, storing in ${TARGET_IMAGE}"
+
+"${MAGICK_CONVERT[@]}" \
+    "${SOURCE_IMAGE}" \
+    -auto-orient \
+    "${TARGET_IMAGE}"

@@ -1,6 +1,6 @@
 #!/bin/bash
 ########################################################################################################################
-#  list_pp3_keys.sh                                                                                                    #
+#  strip_exif.sh                                                                                                       #
 #                                                                                                                      #
 #  Copyright (c) 2023 Jason Nishi                                                                                      #
 #                                                                                                                      #
@@ -23,7 +23,7 @@
 #  === SETUP ===  #
 ###################
 
-#  N/A
+
 
 ############################
 #  === MAIN VARIABLES ===  #
@@ -46,6 +46,26 @@ source "${SCRIPT_DIR}/common_funcs.sh"
 #  === MAIN ===  #
 ##################
 
-if [[ -f "${PP3_INFO_FILE_LOCATION}" ]]; then
-    jq -r '.[].key' "${PP3_INFO_FILE_LOCATION}" | sort -u
+############
+#  INPUTS  #
+############
+
+TARGET_IMAGE="${1}"
+
+####################
+#  MAIN EXECUTION  #
+####################
+
+# Vallidations of parameters 
+
+if [[ ! -f "${TARGET_IMAGE}" ]]; then
+    logstr "${TARGET_IMAGE} not found!"
+    exit 1
 fi
+
+logstr "Stripping EXIF data from ${TARGET_IMAGE} in place"
+
+"${EXIFTOOL}" \
+    -EXIF= \
+    -overwrite_original \
+    "${TARGET_IMAGE}"
