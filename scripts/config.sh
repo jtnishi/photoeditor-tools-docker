@@ -26,3 +26,4 @@ GMIC_SAMPLE_NAMES_FILE_LOCATION="/opt/gmic/sample_names.txt"
 # Executables
 EXIFTOOL="$(which exiftool)"
 MAGICK_CONVERT=("$(which magick)" "convert")
+JQ="$(which jq)"

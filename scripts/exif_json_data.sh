@@ -1,6 +1,6 @@
 #!/bin/bash
 ########################################################################################################################
-#  strip_rotation.sh                                                                                                   #
+#  exif_json_data.sh                                                                                                   #
 #                                                                                                                      #
 #  Copyright (c) 2023 Jason Nishi                                                                                      #
 #                                                                                                                      #
@@ -51,15 +51,11 @@ source "${SCRIPT_DIR}/common_funcs.sh"
 ############
 
 SOURCE_IMAGE="${1}"
-TARGET_IMAGE="${2}"
-
-###############################################################################
+OUTPUT_JSON="${2}"
 
 ####################
 #  MAIN EXECUTION  #
 ####################
-
-OUTPUT_FOLDER="$(dirname "${TARGET_IMAGE}")"
 
 # Vallidations of parameters 
 
@@ -68,14 +64,18 @@ if [[ ! -f "${SOURCE_IMAGE}" ]]; then
     exit 1
 fi
 
+OUTPUT_FOLDER="$(dirname "${OUTPUT_JSON}")"
 if [[ ! -d "${OUTPUT_FOLDER}" ]]; then
     logstr "Making folder ${OUTPUT_FOLDER}"
     mkdir -p "${OUTPUT_FOLDER}"
 fi
 
-logstr "Stripping rotation data from ${SOURCE_IMAGE}, storing in ${TARGET_IMAGE}"
+logstr "Gathering EXIF and image data from ${SOURCE_IMAGE} -> ${OUTPUT_JSON}"
 
-"${MAGICK_CONVERT[@]}" \
-    "${SOURCE_IMAGE}" \
-    -auto-orient \
-    "${TARGET_IMAGE}"
+"${EXIFTOOL}" \
+        -json \
+        -groupHeadings \
+        "${SOURCE_IMAGE}" | \
+    "${JQ}" '.[0]' > "${OUTPUT_JSON}"
+
+logstr "Image data written to ${OUTPUT_JSON}"
