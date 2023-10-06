@@ -155,14 +155,14 @@ if [[ "${SQUARE}" -eq 0 ]]; then
     EXTENT_PARAM="${BOUND}x${BOUND}"
 
     logstr "Resizing ${INPUT_IMAGE} ==> ${OUTPUT_IMAGE}, bound: ${BOUND_PARAM}, square crop"
-    logstr "${CONVERT[@]}" \
+    logstr "Command: ${CONVERT[@]}" \
         "${INPUT_IMAGE}" \
         -auto-orient \
         -resize "${BOUND_PARAM}" \
         -gravity "${USE_GRAVITY}" \
         -extent "${EXTENT_PARAM}" \
         -quality "${JPEG_COMPRESSION}" \
-        "${OUTPUT_IMAGE}" 1>&2
+        "${OUTPUT_IMAGE}"
     "${MAGICK_CONVERT[@]}" \
         "${INPUT_IMAGE}" \
         -auto-orient \
@@ -176,12 +176,12 @@ if [[ "${SQUARE}" -eq 0 ]]; then
 else
     BOUND_PARAM="${BOUND}x${BOUND}>"
     logstr "Resizing ${INPUT_IMAGE} ==> ${OUTPUT_IMAGE}, bound: ${BOUND_PARAM}" 1>&2
-    echo "${MAGICK_CONVERT[@]}" \
+    logstr "Command: ${MAGICK_CONVERT[@]}" \
         "${INPUT_IMAGE}" \
         -auto-orient \
         -resize "${BOUND_PARAM}" \
         -quality "${JPEG_COMPRESSION}" \
-        "${OUTPUT_IMAGE}" 1>&2
+        "${OUTPUT_IMAGE}"
     "${MAGICK_CONVERT[@]}" \
         "${INPUT_IMAGE}" \
         -auto-orient \

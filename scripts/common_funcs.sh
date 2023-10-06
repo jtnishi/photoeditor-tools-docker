@@ -29,3 +29,30 @@ logstr() {
     OUT_STR="[$(date +"%Y-%m-%dT%H:%M:%S%z")] ${MSG_STR}"
     echo "${OUT_STR}" 1>&2
 }
+
+# Check for a boolean value.
+check_bool() {
+    SWITCH_VAL="${1}"
+    DEFAULT_VAL="${2:false}"
+
+    if [[ -z "${SWITCH_VAL}" ]]; then
+        check_bool "${DEFAULT_VAL}"
+        return $?
+    fi
+
+    TEST_STR="$(echo ${SWITCH_VAL} | tr 'A-Z' 'a-z' | xargs echo)"
+
+    case "${TEST_STR}" in
+        "true" | "t" | "y")
+            return 0
+            ;;
+        "false" | "f" | "n")
+            return 1
+            ;;
+        *)
+            logstr "ERROR: Unknown value '${TEST_STR}' passed in. Using default (${DEFAULT_VAL})"
+            check_bool "${DEFAULT_VAL}"
+            return $?
+            ;;
+    esac
+}

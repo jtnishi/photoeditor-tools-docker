@@ -74,6 +74,7 @@ RUN zypper refresh && \
 # * gnu_parallel: GNU Parallel. Used to handle multiprocessing runs. Mostly for our build tools.
 # * gmic: GREYC's Magic for Image Computing. Used for some photo editing manipulation.
 # * less: For help in catting files. Mostly for debug.
+# * bc: Basic calculator, for doing some basic math in bash script.
 
 RUN  zypper refresh && \
     zypper install -y \
@@ -86,7 +87,8 @@ RUN  zypper refresh && \
         rawtherapee \
         gnu_parallel \
         gmic \
-        less && \
+        less \
+        bc && \
     rm -rf /var/cache/zypp/*
 
 ##########################
