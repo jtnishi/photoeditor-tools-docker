@@ -29,3 +29,7 @@ EXIFTOOL="$(which exiftool)"
 MAGICK_CONVERT=("$(which magick)" "convert")
 JQ="$(which jq)"
 GMIC="$(which gmic)"
+RAWTHERAPEE="$(which rawtherapee-cli)"
+
+# Other constants
+AUTOLEVEL_PP3_KEY="AutoLevels_sRGB"
