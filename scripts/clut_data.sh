@@ -1,6 +1,6 @@
 #!/bin/bash
 ########################################################################################################################
-#  config.sh                                                                                                           #
+#  list_clut_names.sh                                                                                                  #
 #                                                                                                                      #
 #  Copyright (c) 2023 Jason Nishi                                                                                      #
 #                                                                                                                      #
@@ -19,13 +19,31 @@
 #  IN THE SOFTWARE.                                                                                                    #
 ########################################################################################################################
 
-PP3_INFO_FILE_LOCATION="/opt/rawtherapee/pp3_info.json"
-GMIC_CLUT_NAMES_FILE_LOCATION="/opt/gmic/clut_names.txt"
-GMIC_CLUT_DATA_FILE_LOCATION="/opt/gmic/clut_data.json"
-GMIC_SAMPLE_NAMES_FILE_LOCATION="/opt/gmic/sample_names.txt"
+###################
+#  === SETUP ===  #
+###################
 
-# Executables
-EXIFTOOL="$(which exiftool)"
-MAGICK_CONVERT=("$(which magick)" "convert")
-JQ="$(which jq)"
-GMIC="$(which gmic)"
+#  N/A
+
+############################
+#  === MAIN VARIABLES ===  #
+############################
+
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+source "${SCRIPT_DIR}/config.sh"
+
+#######################
+#  === FUNCTIONS ===  #
+#######################
+
+# Common functions
+source "${SCRIPT_DIR}/common_funcs.sh"
+
+################################################################################
+################################################################################
+
+##################
+#  === MAIN ===  #
+##################
+
+cat "${GMIC_CLUT_DATA_FILE_LOCATION}"
