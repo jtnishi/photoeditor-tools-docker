@@ -173,6 +173,7 @@ LABEL org.opencontainers.image.authors="wonderfish@gmail.com"
 
 # Things to do here!
 
+# Copy in the main runtime scripts to the docker.
 RUN mkdir -p /opt/bin
 COPY ./scripts/*.sh /opt/bin
 RUN chmod 755 /opt/bin/*.sh
