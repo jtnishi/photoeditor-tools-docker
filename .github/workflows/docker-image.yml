@@ -33,7 +33,6 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=sha
-            type=edge
             type=raw,value=latest,enable={{is_default_branch}}
           flavor:
             latest=auto
