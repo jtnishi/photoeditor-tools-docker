@@ -32,4 +32,6 @@ GMIC="$(which gmic)"
 RAWTHERAPEE="$(which rawtherapee-cli)"
 
 # Other constants
-AUTOLEVEL_PP3_KEY="AutoLevels_sRGB"
+# AUTOLEVEL_PP3_KEY="AutoLevels_sRGB"
+# Using the Auto Matched Curve ISO medium as our auto levelling curve.
+AUTOLEVEL_PP3_KEY="Auto-Matched_Curve_-_ISO_Medium"
