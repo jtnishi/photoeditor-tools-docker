@@ -1,6 +1,6 @@
 #!/bin/bash
 ########################################################################################################################
-#  clut_names.sh                                                                                                       #
+#  parse_all_cluts_runner.sh                                                                                           #
 #                                                                                                                      #
 #  Copyright (c) 2023 Jason Nishi                                                                                      #
 #                                                                                                                      #
@@ -18,6 +18,8 @@
 #  CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS   #
 #  IN THE SOFTWARE.                                                                                                    #
 ########################################################################################################################
+
+# set -x
 
 ###################
 #  === SETUP ===  #
@@ -40,7 +42,8 @@ trap cleanup EXIT
 #  === MAIN VARIABLES ===  #
 ############################
 
-#  N/A
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+CLUT_LIST_TEXT_PATH="${WORKDIR}/clut_list_help.txt"
 
 #######################
 #  === FUNCTIONS ===  #
@@ -53,50 +56,15 @@ logstr() {
     echo "${OUT_STR}" 1>&2
 }
 
-# Get the list of CLUTs from G'MIC
-clut_list_text() {
-
-    # State machining:
-    #  1 = Looking for the start of the list of CLUTs.
-    #  2 = In the list, looking for the end of the list of CLUTs.
-    #  3 = After the list. 
-    STATE=1
-    CAPTURED=""
-
-    # Capture the help text to a text file first, for easy processing, due
-    # to weirdness in the help stuff.
-    CAPTURE_HELP_FILE="${WORKDIR}/capture_help.txt"
-    gmic help clut | sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g' >"${CAPTURE_HELP_FILE}"
-
-    cat "${CAPTURE_HELP_FILE}" | while read LINE; do
-        if [[ ${STATE} -eq 1 ]]; then
-            MATCHED="$(echo "${LINE}" | grep -E ".*clut_name.*can.*be.*\{")"
-            COUNT="$(echo -n "${MATCHED}" | wc -c)"
-            if [[ ${COUNT} -gt 0 ]]; then
-                STATE=2
-                CUR_CAPTURE="$(echo "${LINE}" | grep -E -o '\{.*' | sed -E 's/^\{//')"
-                CAPTURED="${CUR_CAPTURE}"
-            fi
-        elif [[ ${STATE} -eq 2 ]]; then
-            CUR_CAPTURE="$(echo "${LINE}" | grep -E -o '[^\}]*\}?' | head -n 1 | sed -E 's/\}$//')"
-            CAPTURED="${CAPTURED} ${CUR_CAPTURE}"
-
-            CHECKER="$(echo "${LINE}" | grep -F -o '}')"
-            COUNT="$(echo -n "${CHECKER}" | wc -c)"
-            if [[ ${COUNT} -gt 0 ]]; then
-                echo -n "${CAPTURED}"
-                STATE=3
-                break
-            fi
-        fi
-    done  
-}
-
-# Take the lines from the help file and turn them into individual item lines
-cleanup_clut_list() {
-    echo "${1}" | sed -E 's/\|/\n/g' | while read ITEM; do
-        echo "${ITEM}" | sed -E -e 's/^\s*//' -e 's/\s$//'
-    done
+#  Get the path to the G'MIC update file downloaded from the server.
+gmic_update_path() {
+    SEARCH_DIR="${1}"
+    PATH_TO_GMIC="$(find "${SEARCH_DIR}" -name '*.gmic' | head -n 1)"
+    if [[ ! -f "${PATH_TO_GMIC}" ]]; then
+        logstr "ERROR: path to G'MIC update file not found!"
+        exit 1
+    fi
+    echo -n "${PATH_TO_GMIC}"
 }
 
 ################################################################################
@@ -106,11 +74,32 @@ cleanup_clut_list() {
 #  === MAIN ===  #
 ##################
 
-OUTPUT_TEXT="${1}"
+GMIC_UPDATE_SEARCH_DIR="${1}"
+OUTPUT_JSON="${2}"
 
-logstr "Getting list of CLUTs from G'MIC"
-FULL_LIST="$(clut_list_text)"
-logstr "Cleaning up list of CLUTs and storing in ${OUTPUT_TEXT}"
-cleanup_clut_list "${FULL_LIST}" | sort -u > "${OUTPUT_TEXT}"
-COUNT="$(cat "${OUTPUT_TEXT}" | wc -l)"
-logstr "CLUT list output to ${OUTPUT_TEXT}. Count of CLUTs: ${COUNT}"
+# Get list of CLUTs from G'MIC using side script
+"${SCRIPT_DIR}/clut_names_help.sh" "${CLUT_LIST_TEXT_PATH}"
+
+# logstr "List of CLUTs from help follows:"
+# cat "${CLUT_LIST_TEXT_PATH}" | sed 's/^/  * /' 1>&2
+# printf '=%.0s' {1..80} 1>&2
+# echo "" 1>&2
+
+# Get the GMIC update path
+GMIC_UPDATE_PATH="$(gmic_update_path "${GMIC_UPDATE_SEARCH_DIR}")"
+
+logstr "Parsing GMIC update to get CLUT information file"
+# "${SCRIPT_DIR}/parse_all_cluts.py" \
+#     "${GMIC_UPDATE_PATH}" \
+#     "${CLUT_LIST_TEXT_PATH}" \
+#     "${OUTPUT_JSON}" \
+#     --debug
+"${SCRIPT_DIR}/parse_all_cluts.py" \
+    "${GMIC_UPDATE_PATH}" \
+    "${CLUT_LIST_TEXT_PATH}" \
+    "${OUTPUT_JSON}"
+
+logstr "CLUT data output to ${OUTPUT_JSON}."
+
+
+# set +x

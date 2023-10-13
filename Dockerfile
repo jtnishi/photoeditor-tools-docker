@@ -52,18 +52,9 @@ RUN git clone --depth=1 "https://github.com/pixlsus/RawTherapee-Presets" /output
 
 FROM opensuse/tumbleweed:latest AS baseline
 
-#################
-#  BASE UPDATE  #
-#################
-
-RUN zypper refresh && \
-    zypper dup -y && \
-    zypper update -y && \
-    rm -rf /var/cache/zypp/*
-
-########################################
-#  INSTALL BASE PACKAGES WE WILL NEED  #
-########################################
+######################################################
+#  BASE UPDATE & INSTALL BASE PACKAGES WE WILL NEED  #
+######################################################
 
 # * aws-cli: AWS command line interface. Used for accessing S3-compatible data stores, such as MinIO, or just straight S3.
 # * exiftool: EXIFTool by Phil Harvey. Used to update EXIF info in images.
@@ -76,7 +67,9 @@ RUN zypper refresh && \
 # * less: For help in catting files. Mostly for debug.
 # * bc: Basic calculator, for doing some basic math in bash script.
 
-RUN  zypper refresh && \
+RUN zypper refresh && \
+    zypper dup -y && \
+    zypper update -y && \
     zypper install -y \
         aws-cli \
         exiftool \
@@ -90,6 +83,9 @@ RUN  zypper refresh && \
         less \
         bc && \
     rm -rf /var/cache/zypp/*
+
+# * PyYAML - YAML parsing library
+RUN pip install PyYAML
 
 ##########################
 #  HANDLE GMIC UPDATING  #
@@ -122,10 +118,25 @@ RUN chmod 755 /tmp/pp3_info.sh && \
 #  === CALCULATE CLUT NAMES ===  #
 ##################################
 RUN mkdir -p "/opt/gmic"
-COPY ./build_scripts/clut_names.sh /tmp
-RUN chmod 755 /tmp/clut_names.sh && \
-    /tmp/clut_names.sh "/opt/gmic/clut_names.txt" && \
-    rm /tmp/clut_names.sh
+COPY ./build_scripts/clut_names_help.sh \
+     ./build_scripts/parse_all_cluts_runner.sh \
+     ./build_scripts/parse_all_cluts.py \
+     /tmp/
+
+RUN chmod 755 \
+        /tmp/clut_names_help.sh \
+        /tmp/parse_all_cluts_runner.sh \
+        /tmp/parse_all_cluts.py && \
+    /tmp/parse_all_cluts_runner.sh \
+        "/root/gmic" \
+        "/opt/gmic/clut_data.json"
+
+COPY ./build_scripts/clut_names_json.sh /tmp/
+RUN chmod 755 /tmp/clut_names_json.sh && \
+    /tmp/clut_names_json.sh \
+        "/opt/gmic/clut_data.json" \
+        "/opt/gmic/clut_names.txt" && \
+    rm /tmp/clut_names_json.sh
 
 ####################################
 #  === CALCULATE SAMPLE NAMES ===  #

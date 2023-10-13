@@ -1,6 +1,6 @@
 #!/bin/bash
 ########################################################################################################################
-#  list_pp3_keys.sh                                                                                                    #
+#  clut_names_json.sh                                                                                                  #
 #                                                                                                                      #
 #  Copyright (c) 2023 Jason Nishi                                                                                      #
 #                                                                                                                      #
@@ -23,21 +23,22 @@
 #  === SETUP ===  #
 ###################
 
-#  N/A
-
 ############################
 #  === MAIN VARIABLES ===  #
 ############################
 
-SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-source "${SCRIPT_DIR}/config.sh"
+#  N/A
 
 #######################
 #  === FUNCTIONS ===  #
 #######################
 
-# Common functions
-source "${SCRIPT_DIR}/common_funcs.sh"
+#  Put a nice log string to STDERR
+logstr() {
+    MSG_STR="${@}"
+    OUT_STR="[$(date +"%Y-%m-%dT%H:%M:%S%z")] ${MSG_STR}"
+    echo "${OUT_STR}" 1>&2
+}
 
 ################################################################################
 ################################################################################
@@ -46,6 +47,10 @@ source "${SCRIPT_DIR}/common_funcs.sh"
 #  === MAIN ===  #
 ##################
 
-if [[ -f "${PP3_INFO_FILE_LOCATION}" ]]; then
-    jq -r '.[].key' "${PP3_INFO_FILE_LOCATION}" | sort -u
-fi
+INPUT_JSON="${1}"
+OUTPUT_TEXT="${2}"
+
+logstr "Getting list of CLUT IDs from G'MIC via processed file"
+jq -r '.[].lut_id' "${INPUT_JSON}" | sort -u > "${OUTPUT_TEXT}"
+COUNT="$(cat "${OUTPUT_TEXT}" | wc -l)"
+logstr "CLUT list output to ${OUTPUT_TEXT}. Count of CLUTs: ${COUNT}"
