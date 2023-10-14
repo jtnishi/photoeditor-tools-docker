@@ -147,6 +147,17 @@ RUN chmod 755 /tmp/sample_names.sh && \
     /tmp/sample_names.sh "/opt/gmic/sample_names.txt" && \
     rm /tmp/sample_names.sh
 
+##############################################
+#  === PRELOAD SAMPLES/CLUTS FROM G'MIC ===  #
+##############################################
+# for those network free situations
+COPY ./build_scripts/preload_samples_cluts.sh /tmp
+RUN chmod 755 /tmp/preload_samples_cluts.sh && \
+    /tmp/preload_samples_cluts.sh \
+        "/opt/gmic/clut_names.txt" \
+        "/opt/gmic/sample_names.txt" && \
+    rm /tmp/preload_samples_cluts.sh
+
 ################################################################################
 ################################################################################
 
