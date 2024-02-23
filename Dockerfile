@@ -75,8 +75,8 @@ RUN zypper refresh && \
         exiftool \
         ImageMagick \
         jq \
-        python311 \
-        python311-pip \
+        python3 \
+        python3-pip \
         rawtherapee \
         gnu_parallel \
         gmic \
