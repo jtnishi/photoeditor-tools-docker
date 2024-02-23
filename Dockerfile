@@ -80,11 +80,14 @@ RUN zypper refresh && \
         gnu_parallel \
         gmic \
         less \
-        bc && \
+        bc \
+        python3-PyYAML && \
     rm -rf /var/cache/zypp/*
 
 # * PyYAML - YAML parsing library
-RUN pip install PyYAML
+#RUN pip install PyYAML
+
+
 
 ##########################
 #  HANDLE GMIC UPDATING  #
