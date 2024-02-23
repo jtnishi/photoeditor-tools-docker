@@ -71,7 +71,6 @@ RUN zypper refresh && \
     zypper dup -y && \
     zypper update -y && \
     zypper install -y \
-        aws-cli \
         exiftool \
         ImageMagick \
         jq \
