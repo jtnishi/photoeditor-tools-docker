@@ -89,10 +89,7 @@ if [[ ! -f "${INPUT_IMAGE}" ]]; then
     exit 1
 fi
 
-if [[ ! -d "${OUTPUT_FOLDER}" ]]; then
-    logstr "Making directory: ${OUTPUT_FOLDER}"
-    mkdir -p "${OUTPUT_FOLDER}"
-fi
+check_mkdir "${OUTPUT_FOLDER}"
 
 # Run resize for each size.
 logstr "Resizing ${INPUT_IMAGE} into multiple sizes into ${OUTPUT_FOLDER}"

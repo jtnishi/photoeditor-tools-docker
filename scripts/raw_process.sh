@@ -172,10 +172,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 OUTPUT_FOLDER="$(dirname "${TARGET_IMAGE}")"
-if [[ ! -d "${OUTPUT_FOLDER}" ]]; then
-    logstr "Making folder ${OUTPUT_FOLDER}"
-    mkdir -p "${OUTPUT_FOLDER}"
-fi
+check_mkdir "${OUTPUT_FOLDER}"
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 

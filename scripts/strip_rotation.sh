@@ -59,8 +59,6 @@ TARGET_IMAGE="${2}"
 #  MAIN EXECUTION  #
 ####################
 
-OUTPUT_FOLDER="$(dirname "${TARGET_IMAGE}")"
-
 # Vallidations of parameters 
 
 if [[ ! -f "${SOURCE_IMAGE}" ]]; then
@@ -68,10 +66,9 @@ if [[ ! -f "${SOURCE_IMAGE}" ]]; then
     exit 1
 fi
 
-if [[ ! -d "${OUTPUT_FOLDER}" ]]; then
-    logstr "Making folder ${OUTPUT_FOLDER}"
-    mkdir -p "${OUTPUT_FOLDER}"
-fi
+
+OUTPUT_FOLDER="$(dirname "${TARGET_IMAGE}")"
+check_mkdir "${OUTPUT_FOLDER}"
 
 logstr "Stripping rotation data from ${SOURCE_IMAGE}, storing in ${TARGET_IMAGE}"
 

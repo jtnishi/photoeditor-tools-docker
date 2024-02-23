@@ -65,10 +65,7 @@ if [[ ! -f "${SOURCE_IMAGE}" ]]; then
 fi
 
 OUTPUT_FOLDER="$(dirname "${OUTPUT_JSON}")"
-if [[ ! -d "${OUTPUT_FOLDER}" ]]; then
-    logstr "Making folder ${OUTPUT_FOLDER}"
-    mkdir -p "${OUTPUT_FOLDER}"
-fi
+check_mkdir "${OUTPUT_FOLDER}"
 
 logstr "Gathering EXIF and image data from ${SOURCE_IMAGE} -> ${OUTPUT_JSON}"
 

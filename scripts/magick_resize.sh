@@ -135,10 +135,7 @@ if [[ ! -f "${INPUT_IMAGE}" ]]; then
 fi
 
 OUTPUT_DIR="$(dirname "${OUTPUT_IMAGE}")"
-if [[ ! -d "${OUTPUT_DIR}" ]]; then
-    logstr "Making directory: ${OUTPUT_DIR}"
-    mkdir -p "${OUTPUT_DIR}"
-fi
+check_mkdir "${OUTPUT_DIR}"
 
 # Set up other execution parameters
 USE_SIZE_IDX="$(use_idx "${WIDTH_SELECTOR}")"

@@ -30,6 +30,22 @@ logstr() {
     echo "${OUT_STR}" 1>&2
 }
 
+#  Checks if a directory exists, creates otherwise.
+check_mkdir() {
+    TARGET_DIR="${1}"
+    if [[ ! -d "${TARGET_DIR}" ]]; then
+        logstr "Making directory ${TARGET_DIR}"
+        mkdir -p "${TARGET_DIR}"
+
+        if [[ ! -d "${TARGET_DIR}" ]]; then
+            logstr "ERROR: Could not make directory ${TARGET_DIR}"
+            return 1
+        fi
+
+        return 0
+    fi
+}
+
 # Check for a boolean value.
 check_bool() {
     SWITCH_VAL="${1}"

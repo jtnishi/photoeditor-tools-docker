@@ -66,13 +66,13 @@ cat "${CLUT_LIST_PATH}" | \
     parallel --jobs "${USE_CORES}" \
         "${GMIC}" \
             -sample apples \
-            +map_clut '{}' \
+            +map_clut '{}'
 
 logstr "Preloading all samples"
 cat "${SAMPLES_LIST_PATH}" | \
     parallel --jobs "${USE_CORES}" \
         "${GMIC}" \
-            -sample '{}' \
+            -sample '{}'
 
 logstr "Preload completed."
 
